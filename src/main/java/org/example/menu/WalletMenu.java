@@ -2,6 +2,7 @@ package org.example.menu;
 
 import org.example.service.UserService;
 import org.example.service.UserSingleton;
+
 import java.util.Scanner;
 
 public class WalletMenu {

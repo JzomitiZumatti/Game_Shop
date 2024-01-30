@@ -2,45 +2,13 @@ package org.example.repository;
 
 import org.example.model.User;
 import org.example.repository.dao.UserRepository;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserRepositoryImpl implements UserRepository {
     private final Connection connection;
-    private static final String selectAllById =
-            """
-                            SELECT *
-                            FROM users
-                            WHERE id = ?
-                    """;
-
-    private static final String register =
-            """
-                            INSERT INTO users(
-                            name, birthday, amount, nickname, password)
-                            VALUES (?, ?, ?, ?, ?)
-                    """;
-
-    private static final String recharge =
-            """
-                            UPDATE users
-                            SET amount = ?
-                            WHERE  id = ?;
-                    """;
-
-    private static final String userGames =
-            """
-                            SELECT users_games.games_id 
-                            FROM users_games
-                            WHERE users_games.users_id = ?
-                    """;
-
-    private static final String addGameToUser =
-            """
-                    INSERT INTO "users_games"(users_id, games_id)
-                    VALUES (?, ?);
-                    """;
 
     public UserRepositoryImpl(Connection connection) {
         this.connection = connection;
@@ -51,13 +19,15 @@ public class UserRepositoryImpl implements UserRepository {
 
         try {
             Statement statement = this.connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(selectAllById + userId);
+            ResultSet resultSet = statement.executeQuery(
+                    "SELECT * FROM users WHERE id = ?" + userId
+            );
             resultSet.next();
 
             return User.builder()
                     .id(resultSet.getInt("id"))
                     .name(resultSet.getString("name"))
-                    .birthday(resultSet.getString("birthday"))
+                    .birthday(resultSet.getDate("birthday"))
                     .amount(resultSet.getInt("amount"))
                     .nickname(resultSet.getString("nickname"))
                     .password(resultSet.getString("password"))
@@ -77,13 +47,15 @@ public class UserRepositoryImpl implements UserRepository {
     public User findByNickname(String nickname) {
         try {
             Statement statement = this.connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM users WHERE nickname = '" + nickname + "'");
+            ResultSet resultSet = statement.executeQuery(
+                    "SELECT * FROM users WHERE nickname = '" + nickname + "'"
+            );
 
             if (resultSet.next()) {
                 return User.builder()
                         .id(resultSet.getInt("id"))
                         .name(resultSet.getString("name"))
-                        .birthday(resultSet.getString("birthday"))
+                        .birthday(resultSet.getDate("birthday"))
                         .amount(resultSet.getInt("amount"))
                         .nickname(resultSet.getString("nickname"))
                         .password(resultSet.getString("password"))
@@ -104,10 +76,12 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public User register(User user) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(register, PreparedStatement.RETURN_GENERATED_KEYS);
-
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "INSERT INTO users(name, birthday, amount, nickname, password) VALUES (?, ?, ?, ?, ?)",
+                    PreparedStatement.RETURN_GENERATED_KEYS
+            );
             preparedStatement.setString(1, user.getName());
-            preparedStatement.setString(2, user.getBirthday());
+            preparedStatement.setDate(2, new java.sql.Date(user.getBirthday().getTime()));
             preparedStatement.setInt(3, user.getAmount());
             preparedStatement.setString(4, user.getNickname());
             preparedStatement.setString(5, user.getPassword());
@@ -128,11 +102,11 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void recharge(int amount, int userId /*User user*/) {
+    public void recharge(int amount, int userId) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(recharge);
-            /*preparedStatement.setInt(1, user.getAmount());
-            preparedStatement.setInt(2, user.getId());*/
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "UPDATE users SET amount = ? WHERE  id = ?;"
+            );
             preparedStatement.setInt(1, amount);
             preparedStatement.setInt(2, userId);
             preparedStatement.executeUpdate();
@@ -145,7 +119,9 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public List<Integer> userGames(int id) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(userGames);
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "SELECT users_games.games_id FROM users_games WHERE users_games.users_id = ?"
+            );
             preparedStatement.setInt(id, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             List<Integer> userGamesId = new ArrayList<>();
@@ -170,7 +146,9 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void addGame(int userId, int gameId) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(addGameToUser);
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "INSERT INTO \"users_games\"(users_id, games_id) VALUES (?, ?);"
+            );
             preparedStatement.setInt(1, userId);
             preparedStatement.setInt(2, gameId);
             preparedStatement.executeUpdate();

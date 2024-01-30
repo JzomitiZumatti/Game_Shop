@@ -9,6 +9,5 @@ public interface UserRepository {
     User findByNickname(String nickname);
     List<Integer> userGames(int id);
     void recharge(int amount, int userId);
-    // void recharge(User user);
     void addGame(int userId, int gameId);
 }

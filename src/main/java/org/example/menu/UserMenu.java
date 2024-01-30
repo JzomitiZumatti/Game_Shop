@@ -3,6 +3,10 @@ package org.example.menu;
 import org.example.model.User;
 import org.example.service.UserService;
 import org.example.service.UserSingleton;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
@@ -124,9 +128,9 @@ public class UserMenu {
 
     private void signUp() {
         System.out.println("Enter your name: ");
-        String name = scanner.next();
-        System.out.println("Enter your birthday: ");
-        String birthday = scanner.next();
+        String name = scanner.nextLine();
+        Date birthday = askForBirthday();
+
         System.out.println("Enter your username/nickname: ");
         String nickname = scanner.next();
         System.out.println("Enter your password: ");
@@ -144,6 +148,29 @@ public class UserMenu {
         userSingleton.setUser(newUser);
         scanner.nextLine();
         System.out.println(Messages.SUCCESSFUL_SIGN_UP);
+    }
+
+    private Date askForBirthday() {
+        Date birthday;
+        do {
+            System.out.println("Please enter your birthday (in format yyyy/MM/dd): ");
+            String input = scanner.nextLine();
+            birthday = parseToDate(input);
+            if (birthday == null) {
+                System.out.println(Messages.WRONG_DATE_FORMAT);
+            }
+        } while (birthday == null);
+        return birthday;
+    }
+
+    private Date parseToDate(String date) {
+        SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy/MM/dd");
+        try {
+            DATE_FORMATTER.setLenient(false);
+            return DATE_FORMATTER.parse(date);
+        } catch (ParseException e) {
+            return null;
+        }
     }
 
     private String getValidChoice() {

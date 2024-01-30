@@ -6,6 +6,6 @@ import java.util.List;
 public interface GameRepository {
     Game findById(int id);
     String findByName(String name);
-    List<Game> showAll();
+    List<Game> findAll();
     int getNumberOfGames();
 }

@@ -13,11 +13,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class UserServiceTest {
 
     private UserService userService;
-    private UserRepositoryMock userRepositoryMock;
 
     @BeforeEach
     void setUp() {
-        userRepositoryMock = new UserRepositoryMock(List.of(
+        UserRepositoryMock userRepositoryMock = new UserRepositoryMock(List.of(
                 User.builder().id(1).nickname("Dealon").build(),
                 User.builder().id(2).nickname("Breadly").build()
         ));

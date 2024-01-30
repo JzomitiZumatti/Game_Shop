@@ -2,6 +2,7 @@ package org.example.repository;
 
 import org.example.model.Game;
 import org.example.repository.dao.GameRepository;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,7 @@ public class GameRepositoryImpl implements GameRepository {
             return Game.builder()
                     .id(resultSet.getInt("id"))
                     .name(resultSet.getString("name"))
-                    .release_date(resultSet.getString("release_date"))
+                    .releaseDate(resultSet.getDate("release_date"))
                     .rating(resultSet.getInt("rating"))
                     .cost(resultSet.getInt("cost"))
                     .description(resultSet.getString("description"))
@@ -61,8 +62,9 @@ public class GameRepositoryImpl implements GameRepository {
             throw new RuntimeException(e);
         }
     }
+
     @Override
-    public List<Game> showAll() {
+    public List<Game> findAll() {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM games");
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -73,7 +75,7 @@ public class GameRepositoryImpl implements GameRepository {
                 Game game = Game.builder()
                         .id(resultSet.getInt("id"))
                         .name(resultSet.getString("name"))
-                        .release_date(resultSet.getString("release_date"))
+                        .releaseDate(resultSet.getDate("release_date"))
                         .rating(resultSet.getInt("rating"))
                         .cost(resultSet.getInt("cost"))
                         .description(resultSet.getString("description"))

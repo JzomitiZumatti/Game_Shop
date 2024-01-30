@@ -52,4 +52,3 @@ public class GameServiceTest {
         assertEquals(gameRepositoryMock.getNumberOfGames(), numberOfGames);
     }
 }
-

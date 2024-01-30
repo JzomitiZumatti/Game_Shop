@@ -30,7 +30,7 @@ public class GameRepositoryMock implements GameRepository {
         return null;
     }
 
-    public List<Game> showAll() {
+    public List<Game> findAll() {
         return new ArrayList<>(games);
     }
     public int getNumberOfGames() {

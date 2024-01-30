@@ -4,6 +4,7 @@ import org.example.model.Game;
 import org.example.service.GameService;
 import org.example.service.UserService;
 import org.example.service.UserSingleton;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -58,6 +59,7 @@ public class GameShopMenu {
         return correctResponse.stream().
                 anyMatch(element -> element.equals(gameResponse));
     }
+
     private void showAllGames() {
         gameService.showAll().forEach(System.out::println);
     }
@@ -77,11 +79,11 @@ public class GameShopMenu {
         }
         if (isEnoughMoney(gameResponse) && !isGameAlreadyBought(gameResponse)) {
             System.out.println("Do you really want to buy " + gameService.findById(Integer.parseInt(gameResponse)).getName() + "?");
-            if (handleResponse()) purchaseGame(gameResponse);
+            if (hasResponse()) purchaseGame(gameResponse);
             else System.out.println(Messages.REJECT_GAME_PURCHASE);
         } else if (!isEnoughMoney(gameResponse) && !isGameAlreadyBought(gameResponse)) {
             System.err.println(Messages.NOT_ENOUGH_MONEY);
-            if (handleResponse()) walletMenu.recharge();
+            if (hasResponse()) walletMenu.recharge();
             else System.out.println(Messages.REJECT_RECHARGE);
         } else if ((isEnoughMoney(gameResponse) || !isEnoughMoney(gameResponse)) && isGameAlreadyBought(gameResponse)) {
             System.err.println(Messages.GAME_ALREADY_BOUGHT);
@@ -101,7 +103,7 @@ public class GameShopMenu {
                 anyMatch(game -> game.getName().equals(gameService.findByName(gameService.findById(Integer.parseInt(gameResponse)).getName())));
     }
 
-    private boolean handleResponse() {
+    private boolean hasResponse() {
         String response;
 
         do {

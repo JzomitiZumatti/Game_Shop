@@ -16,6 +16,7 @@ public enum Messages {
                     0. Exit.
                 Choose an option:"""),
     WRONG_PASSWORD("Wrong password. Try again:"),
+    WRONG_DATE_FORMAT("Incorrect date format. Please, try again."),
     INVALID_INPUT("Invalid input. Please enter "),
     SUCCESSFUL_SIGN_IN("Login successful! Welcome back, "),
     SUCCESSFUL_SIGN_UP("Registered successfully."),

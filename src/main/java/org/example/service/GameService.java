@@ -24,7 +24,7 @@ public class GameService {
 
     public List<Game> showAll() {
 
-        return this.gameRepository.showAll();
+        return this.gameRepository.findAll();
     }
     public int getNumberOfGames() {
         return this.gameRepository.getNumberOfGames();
